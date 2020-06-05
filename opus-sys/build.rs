@@ -17,23 +17,27 @@ fn main() {
     inform_cargo(out_dir);
 }
 
+fn target_host() -> String {
+    let target = std::env::var("TARGET").unwrap();
+    let mut target_tuple = target.split("-").collect::<Vec<_>>();
+    // Remove the vendor component.
+    target_tuple.remove(1);
+
+    target_tuple.join("-")
+}
+
 #[cfg(windows)]
 fn build(out_dir: &Path) {
     std::env::set_current_dir("libopus").unwrap_or_else(|e| panic!("{}", e));
 
-    let mut configure_args = vec![
-        "./configure",
-        "--disable-shared", "--enable-static",
-        "--disable-doc",
-        "--disable-extra-programs",
-        "--with-pic",
-        "--prefix", &out_dir.to_str().unwrap().replace("\\", "/")];
-    let host = std::env::var("HOST").unwrap();
-    if !host.is_empty() {
-        configure_args.push("--host");
-        configure_args.push(&host);
-    }
-    success_or_panic(&mut Command::new("sh").args(&configure_args));
+    success_or_panic(Command::new("sh")
+        .args(&["./configure",
+                "--disable-shared", "--enable-static",
+                "--disable-doc",
+                "--disable-extra-programs",
+                "--with-pic",
+                "--prefix", &out_dir.to_str().unwrap().replace("\\", "/"),
+                "--host", &target_host()]));
     success_or_panic(&mut Command::new("make"));
     success_or_panic(&mut Command::new("make").arg("install"));
 
@@ -44,18 +48,13 @@ fn build(out_dir: &Path) {
 fn build(out_dir: &Path) {
     std::env::set_current_dir("libopus").unwrap_or_else(|e| panic!("{}", e));
 
-    let mut configure_args = vec![
-        "--disable-shared", "--enable-static",
-        "--disable-doc",
-        "--disable-extra-programs",
-        "--with-pic",
-        "--prefix", out_dir.to_str().unwrap()];
-    let host = std::env::var("HOST").unwrap();
-    if !host.is_empty() {
-        configure_args.push("--host");
-        configure_args.push(&host);
-    }
-    success_or_panic(&mut Command::new("./configure").args(configure_args));
+    success_or_panic(Command::new("./configure")
+        .args(&["--disable-shared", "--enable-static",
+                "--disable-doc",
+                "--disable-extra-programs",
+                "--with-pic",
+                "--prefix", out_dir.to_str().unwrap(),
+                "--host", &target_host()]));
     success_or_panic(&mut Command::new("make"));
     success_or_panic(&mut Command::new("make").arg("install"));
 
