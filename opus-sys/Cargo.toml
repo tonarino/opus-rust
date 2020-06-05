@@ -1,0 +1,16 @@
+[package]
+name = "opus-sys"
+version = "0.2.1"
+authors = ["Tero Hänninen <lgvz@users.noreply.github.com>"]
+description = "Bindings to libopus"
+license = "MIT"
+keywords = ["bindings", "opus"]
+repository = "https://github.com/lgvz/rust-opus"
+links = "opus"
+build = "build.rs"
+
+[dependencies]
+libc = "0.2"
+
+[build-dependencies]
+pkg-config = "0.3.8"

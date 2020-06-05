@@ -1,0 +1,7 @@
+target/
+.deps/
+.libs/
+.dirstamp
+*.o
+*.lo
+*.log
