@@ -5,3 +5,8 @@ target/
 *.o
 *.lo
 *.log
+opus-sys/libopus/Makefile
+opus-sys/libopus/config.status
+opus-sys/libopus/doc/Makefile
+opus-sys/libopus/libtool
+opus-sys/libopus/opus.pc
